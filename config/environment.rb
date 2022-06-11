@@ -1,0 +1,11 @@
+require "nokogiri"
+require "open-uri"
+require "net/http"
+require 'colorize'
+require "json"
+require_relative '../lib/restaurant_categories.rb'
+require_relative '../lib/coffee.rb'
+require_relative "../lib/weather.rb"
+require_relative "../lib/explore_restaurant.rb"
+require_relative '../lib/scrapping.rb'
+require_relative "../lib/cli.rb"
