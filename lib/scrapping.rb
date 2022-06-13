@@ -29,23 +29,25 @@ class Scrapper
       end
     end
 
-  def get_restaurant
-     self.get_page(Categories_URL).css("div.col-xs-12.col-s-4.col-l-3").each do |data|
-      restaurant=Restaurant_categories.new
-      restaurant.title= data.css("div.teaser-title").text.strip
-      restaurant.url=data.css("a").attr("href").value
-     end
+  def get_restaurant_categories
+      self.get_page(Categories_URL).css("div.col-xs-12.col-s-4.col-l-3").each do |data|
+        restaurant=Restaurant_categories.new
+        restaurant.title= data.css("div.teaser-title").text.strip
+        restaurant.url=data.css("a").attr("href").value
+      end
   end
   
-  def get_selected_categories url
+  def get_selected_category category
+    url=category.url
     page_url= url.include?(Categories_URL)? url:"https://www.broadsheet.com.au#{url}"
       self.get_page(page_url).css("div.col-m-6.col-xxs-12").collect do |categories|
         exploring=Restaurant.new
         a=categories.css("a h2").text.strip
         b=categories.css("a h5").text.strip
-        exploring.title= a + b
+        exploring.name= a +" "+ b
         exploring.url=categories.css("a").attr("href").value
       end
+
   end
   
   def get_selected_description (restaurant)
@@ -55,6 +57,7 @@ class Scrapper
         restaurant.time =selected.css("div.venue-hours-time").text.strip
         restaurant.website=selected.css("div.website-layout a").text.strip
         restaurant.phonenumber=selected.css("div.telephone-block a").text.strip
+        restaurant.address=selected.css("address a span").text
       end
   end
 

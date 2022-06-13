@@ -1,7 +1,7 @@
 class Restaurant
 @@all=[]
 
-attr_accessor :restaurant, :time, :location, :website, :phonenumber,:title,:url
+attr_accessor :name, :time, :address, :website, :phonenumber, :url
 
     def initialize 
         @@all << self
@@ -10,9 +10,10 @@ attr_accessor :restaurant, :time, :location, :website, :phonenumber,:title,:url
     def self.all
         @@all
     end
-    
+
     def self.reset_all
         @@all.clear
-     end
+    end
+
 
 end

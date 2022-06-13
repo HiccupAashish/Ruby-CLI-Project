@@ -6,10 +6,11 @@ attr_accessor :name
     def initialize
         Scrapper.new.get_coffee
         Scrapper.new.get_location_and_weather
-        
+        Scrapper.new.get_restaurant_categories   
     end
 
     def start
+        @entered_num=[]
         system("clear")
         loading_message
         while menu != "exit"
@@ -20,7 +21,7 @@ attr_accessor :name
     def loading_message
         puts "\e[31m" 
     puts "Please Enter your name".blue.on_red.blink
-    @name=gets.chomp
+    @name=gets.chomp.underline.red
     system("clear")
     puts " Namaste \u{1F64F} \u{1F64F} #{@name} how can i help you today".red
     puts " "
@@ -33,31 +34,28 @@ attr_accessor :name
         puts "2. Buy a cup of Coffee \u{1FAD6} \u{1F375} "
         puts " "
         puts  " "
-        puts "3. Explore places to eat in Sydeny \u{1F942} \u{1F942}"
+        puts "3. Explore places to eat in Sydeny \u{1F942} \u{1F37D} \u{1F942}"
         puts " "
         puts " "
         puts "//Enter exit to exit\\"
         input= gets.strip.downcase
-            if input.to_i === 1
-               loop do
+         if input.to_i === 1
+                loop do
                     list_city_for_weather
                     puts "Press {Y} to see the city again or {X} to go back".red
                     a = gets.chomp.downcase
                     break if a == "x"
-               end  
+                end 
             elsif input.to_i === 2
                 list_coffee  
             elsif input.to_i === 3
-               
-                    list_categories
-               
+                list_categories      
             elsif input === "exit"
                 system("clear")
                 exit_program
             else
                 puts "Invalid please try again !!".blue.on_red
-                
-            end  
+        end  
     end
 
     def exit_program
@@ -79,40 +77,51 @@ attr_accessor :name
 
     def list_categories
         loop do 
-            Restaurant_categories.reset_all
             Restaurant.reset_all
-            Scrapper.new.get_restaurant
-        Restaurant_categories.all.each.with_index(1) do |category, index|
-            puts "#{index}.#{category.title}"  
-        end
-        puts "Please select a restaurant to know about it #{@name} or any other button to go back".blue
-        enter=gets.chomp.to_i
-        
-        if enter.between?(1,8)
             
-            selected_category=Restaurant_categories.all[enter-1]
-            Scrapper.new.get_selected_categories (selected_category.url)
-            
-            Restaurant.all.each.with_index(1) do |categories, index|
-                puts "#{index}.#{categories.title}".colorize(:red).on_blue
+            Restaurant_categories.all.each.with_index(1) do |category, index|
+              puts "#{index}.#{category.title}".yellow
+              puts "_______________"
+              puts "_______________"  
             end
-            puts "Please select any Restaurant to know about it"
-            enter_categories=gets.chomp.to_i
-            p Restaurant.all.length
-            selected_restaurant=Restaurant.all[enter_categories.to_i-1]
+            puts "Please select a category to get the restaurants #{@name} or any other button to go back"
+            enter=gets.chomp.to_i
+       
+            if enter.between?(1,Restaurant_categories.all.length) 
+         
+                @entered_num.push enter
+                selected_category=Restaurant_categories.all[enter-1]
+                Scrapper.new.get_selected_category (selected_category)
 
-            Scrapper.new.get_selected_description (selected_restaurant)
-            puts "Servicing Hours: #{selected_restaurant.time}".red                    
-             print "Website is: #{selected_restaurant.website}"
+                Restaurant.all.each.with_index(1) do |category, index|
+                    puts "#{index}.#{category.name}".blue.on_red.blink
+                    puts "=====XXXXX====="
+                end
             
-            p selected_restaurant.phonenumber   
-    else
-        puts "Invalid Entry please select again"
-    end
-    puts "Enter {x} to go to Main menu or press any button too see the categories again "
-    input=gets.chomp.to_s
-    break if input =="x"
-    end
+                puts "Please select any Restaurant to know about it"
+                enter_categories=gets.chomp.to_i
+                
+                if enter_categories < Restaurant.all.length || enter_categories == Restaurant.all.length
+                    selected_restaurant=Restaurant.all[enter_categories.to_i-1]
+
+                    Scrapper.new.get_selected_description (selected_restaurant)
+                    system("clear")
+                    puts "#{selected_restaurant.name}"
+                    puts " "
+                    puts "Servicing Hours                    Website              PhoneNo"                   
+                    puts "#{selected_restaurant.time}                #{selected_restaurant.website}           #{selected_restaurant.phonenumber}"
+                    puts " "
+                    puts "Address is: #{selected_restaurant.address}".red
+                 else
+                   puts "Enter a valid number"
+                end
+            else
+              puts "Invalid Entry please select again"
+            end
+          puts "Enter {x} to go to Main menu or press any button too see the categories again "
+          input=gets.chomp.to_s
+         break if input =="x"
+        end
     end
     
     def list_coffee

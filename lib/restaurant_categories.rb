@@ -1,9 +1,10 @@
 class Restaurant_categories
 
-    attr_accessor :title, :url, :restaurant
+    attr_accessor :title, :url, :restaurants
 @@all=[]
 
-    def initialize
+
+    def initialize()
         @@all << self
     end
 
